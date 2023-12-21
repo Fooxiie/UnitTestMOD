@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using FoxLottery.DB;
 using FoxORM;
 
@@ -52,5 +53,28 @@ public class Tests
         // Assert
         Assert.That(allLotteries, Is.Not.Null);
         Assert.That(allLotteries, Has.Count.GreaterThanOrEqualTo(2)); // at least two lotteries should be inserted by now
+    }
+    
+    [Test, Order(4)]
+    public async Task TestJoinAsync()
+    {
+        // Arrange
+        Expression<Func<LotteryModel, bool>> predicate = (lottery) => lottery.montant > 10;
+        // Act
+        var result = await _foxOrm.JoinAsync<LotteryModel, TicketModel>(predicate);
+        // Assert
+        Assert.That(result, Is.Not.Null);
+    }
+    
+    [Test, Order(5)]
+    public async Task TestDelete()
+    {
+        // Arrange
+        var lotteryModel = new LotteryModel { montant = 30, enterpriseName = "DEF Corp", bizID = 3, price = 30.0f };
+        await _foxOrm.Save<LotteryModel>(lotteryModel);
+        // Act
+        var result = await _foxOrm.Delete<LotteryModel>(lotteryModel);
+        // Assert
+        Assert.That(result, Is.True);
     }
 }
