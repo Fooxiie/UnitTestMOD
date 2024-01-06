@@ -54,6 +54,15 @@ public class Tests
         Assert.That(allLotteries, Is.Not.Null);
         Assert.That(allLotteries, Has.Count.GreaterThanOrEqualTo(2)); // at least two lotteries should be inserted by now
     }
+
+    [Test, Order(3)]
+    public async Task TestQueryPredicate()
+    {
+        var queriedLottery = await _foxOrm.Query<LotteryModel>(lottery => lottery.montant > 10);
+
+        Assert.That(queriedLottery, Is.Not.Null);
+        Assert.IsTrue(queriedLottery[0].montant > 10);
+    }
     
     [Test, Order(4)]
     public async Task TestJoinAsync()
